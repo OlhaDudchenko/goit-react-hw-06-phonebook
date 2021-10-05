@@ -1,38 +1,43 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getVisibleContacts } from "../../redux/phonebook/phonebook-selectors";
+import { del } from "../../redux/phonebook/phonebook-actions";
 import PropTypes from "prop-types";
 import {
-  ContactsList,
+  List,
   ContactsListItem,
   ContactsListButton,
   ContactsListName,
 } from "./ContactList.styled";
 
-export function ContactList({ contacts, onDeleteContact }) {
+export function ContactsList() {
+  const items = useSelector(getVisibleContacts);
+
+  const dispatch = useDispatch();
   return (
-    <ContactsList>
-      {contacts.map(({ id, name, number }) => {
+    <List>
+      {items.map(({ id, name, number }) => {
         return (
           <ContactsListItem key={id} id={id}>
             <ContactsListName>
               {name}: {number}
             </ContactsListName>
-            <ContactsListButton onClick={() => onDeleteContact(id)}>
+            <ContactsListButton onClick={() => dispatch(del(id))}>
               Delete
             </ContactsListButton>
           </ContactsListItem>
         );
       })}
-    </ContactsList>
+    </List>
   );
 }
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
+ContactsList.propTypes = {
+  items: PropTypes.arrayOf(
     PropTypes.exact({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       number: PropTypes.string.isRequired,
     })
   ),
-  onDeleteContact: PropTypes.func.isRequired,
 };
